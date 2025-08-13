@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
-import { Send, Users, LogOut, Trash2, Play } from 'lucide-react';
+import { Send, Users, LogOut, Trash2 } from 'lucide-react';
 
 export default function ChatApp() {
   const [socket, setSocket] = useState(null);
@@ -198,62 +198,38 @@ export default function ChatApp() {
 
   if (!hasJoined) {
     return (
-      <div 
-        className="min-h-screen flex items-center justify-center p-4 relative"
-        style={{
-          background: 'linear-gradient(135deg, #000000 0%, #141414 50%, #000000 100%)',
-        }}
-      >
-        {/* Netflix-style background pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-32 h-32 border border-red-600 rounded-full"></div>
-          <div className="absolute top-40 right-20 w-24 h-24 border border-red-600 rounded-full"></div>
-          <div className="absolute bottom-32 left-1/4 w-40 h-40 border border-red-600 rounded-full"></div>
-        </div>
-
-        <div className="bg-black/80 backdrop-blur-sm rounded-2xl shadow-2xl p-8 w-full max-w-md border border-red-900/30 relative z-10">
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center mb-4">
-              <Play className="text-red-600 mr-3" size={32} />
-              <h1 className="text-4xl font-black text-white tracking-wider">
-                CHAT ROOM
-              </h1>
-            </div>
-            <p className="text-gray-300">
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+        <div className="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-white mb-2">
+              Chat App
+            </h1>
+            <p className="text-gray-400">
               Enter your username to start chatting
             </p>
-            <p className="text-sm text-red-400 mt-3 font-medium">
-              All conversations are preserved
+            <p className="text-sm text-gray-500 mt-2">
+              💬 Chat history is preserved - see what you missed!
             </p>
           </div>
           
-          <div className="space-y-6">
-            <div className="relative">
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && joinChat()}
-                placeholder="Enter username"
-                maxLength={20}
-                className="w-full px-4 py-4 bg-gray-900/50 border-2 border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-colors font-medium"
-                disabled={isConnecting}
-              />
-            </div>
+          <div className="space-y-4">
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && joinChat()}
+              placeholder="Username"
+              maxLength={20}
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              disabled={isConnecting}
+            />
             
             <button
               onClick={joinChat}
               disabled={!username.trim() || isConnecting}
-              className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 disabled:scale-100 shadow-lg"
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
             >
-              {isConnecting ? (
-                <div className="flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                  Connecting...
-                </div>
-              ) : (
-                'START CHATTING'
-              )}
+              {isConnecting ? 'Connecting...' : 'Join Chat'}
             </button>
           </div>
         </div>
@@ -262,70 +238,54 @@ export default function ChatApp() {
   }
 
   return (
-    <div 
-      className="h-screen flex overflow-hidden"
-      style={{
-        background: 'linear-gradient(135deg, #000000 0%, #141414 100%)',
-      }}
-    >
-      {/* Netflix-style Sidebar */}
-      <div className="w-80 bg-black/90 border-r border-red-900/30 flex flex-col flex-shrink-0 backdrop-blur-sm">
-        {/* Header */}
-        <div className="p-6 border-b border-red-900/30 flex-shrink-0">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <Play className="text-red-600 mr-3" size={24} />
-              <h2 className="text-xl font-black text-white tracking-wider">CHAT ROOM</h2>
-            </div>
-            <div className="flex space-x-3">
+    <div className="h-screen bg-gray-900 flex overflow-hidden">
+      {/* Fixed Sidebar */}
+      <div className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col flex-shrink-0">
+        {/* Header - Fixed */}
+        <div className="p-4 border-b border-gray-700 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-white">Chat Room</h2>
+            <div className="flex space-x-2">
               <button
                 onClick={clearChatHistory}
-                className="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-full hover:bg-red-900/20"
+                className="text-gray-400 hover:text-red-400 transition-colors"
                 title="Clear Chat History"
               >
-                <Trash2 size={18} />
+                <Trash2 size={16} />
               </button>
               <button
                 onClick={leaveChat}
-                className="text-gray-400 hover:text-red-400 transition-colors p-2 rounded-full hover:bg-red-900/20"
+                className="text-gray-400 hover:text-red-400 transition-colors"
                 title="Leave Chat"
               >
                 <LogOut size={20} />
               </button>
             </div>
           </div>
-          <div className="bg-gradient-to-r from-red-600/20 to-red-800/20 rounded-lg p-3 border-l-4 border-red-600">
-            <p className="text-white font-semibold">Welcome, {username}!</p>
-            <p className="text-red-300 text-sm">Now watching: General Chat</p>
-          </div>
+          <p className="text-sm text-gray-400 mt-1">Welcome, {username}!</p>
         </div>
         
-        {/* Active Users */}
+        {/* Active Users - Fixed with its own scroll if needed */}
         <div className="flex-1 flex flex-col min-h-0">
-          <div className="p-6 flex-shrink-0">
-            <div className="flex items-center mb-4">
-              <Users size={20} className="text-red-500 mr-3" />
-              <span className="text-lg font-bold text-white">
-                Users Online
-              </span>
-              <span className="ml-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
-                {activeUsers.length}
+          <div className="p-4 flex-shrink-0">
+            <div className="flex items-center mb-3">
+              <Users size={16} className="text-gray-400 mr-2" />
+              <span className="text-sm font-medium text-gray-300">
+                Online ({activeUsers.length})
               </span>
             </div>
           </div>
           
-          {/* Users list */}
-          <div className="flex-1 overflow-y-auto px-6 pb-6">
-            <div className="space-y-3">
+          {/* Users list with independent scroll if many users */}
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            <div className="space-y-2">
               {activeUsers.map((user) => (
-                <div key={user.id} className="flex items-center space-x-3 p-3 rounded-lg bg-gray-900/30 border border-gray-800 hover:border-red-900/50 transition-colors">
-                  <div className="w-3 h-3 bg-red-500 rounded-full flex-shrink-0 animate-pulse"></div>
-                  <div className="flex-1">
-                    <span className="text-white font-medium truncate block">{user.username}</span>
-                    {user.typing && (
-                      <span className="text-red-400 text-xs animate-pulse font-medium">typing...</span>
-                    )}
-                  </div>
+                <div key={user.id} className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                  <span className="text-sm text-gray-300 truncate">{user.username}</span>
+                  {user.typing && (
+                    <span className="text-xs text-blue-400 animate-pulse flex-shrink-0">typing...</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -333,52 +293,44 @@ export default function ChatApp() {
         </div>
       </div>
 
-      {/* Main Chat Area */}
+      {/* Main Chat Area - Flexible */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Chat Header */}
-        <div className="bg-black/80 border-b border-red-900/30 p-6 flex-shrink-0 backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-1">General Chat</h3>
-              <p className="text-red-300 font-medium">
-                {activeUsers.length} {activeUsers.length === 1 ? 'viewer' : 'viewers'} watching
-              </p>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-red-400 font-medium">LIVE</span>
-            </div>
-          </div>
+        {/* Chat Header - Fixed */}
+        <div className="bg-gray-800 border-b border-gray-700 p-4 flex-shrink-0">
+          <h3 className="text-lg font-semibold text-white">General Chat</h3>
+          <p className="text-sm text-gray-400">
+            {activeUsers.length} {activeUsers.length === 1 ? 'user' : 'users'} online
+          </p>
         </div>
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0">
+        {/* Messages Area - Scrollable */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
           {messages.map((message) => (
             <div key={message.id} className={`flex ${
               message.type === 'system' ? 'justify-center' : 
               message.senderId === socket?.id ? 'justify-end' : 'justify-start'
             }`}>
               {message.type === 'system' ? (
-                <div className={`text-sm px-4 py-2 rounded-full flex-shrink-0 font-medium ${
+                <div className={`text-sm px-3 py-1 rounded-full flex-shrink-0 ${
                   message.isWelcome 
-                    ? 'text-red-200 bg-red-900/40 border border-red-700/50' 
-                    : 'text-gray-300 bg-gray-800/50 border border-gray-700'
+                    ? 'text-blue-300 bg-blue-900/30 border border-blue-700' 
+                    : 'text-gray-500 bg-gray-800'
                 }`}>
                   {message.text}
                 </div>
               ) : (
-                <div className={`max-w-xs lg:max-w-md px-5 py-3 rounded-2xl flex-shrink-0 shadow-lg backdrop-blur-sm ${
+                <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg flex-shrink-0 ${
                   message.senderId === socket?.id
-                    ? 'bg-gradient-to-r from-red-600 to-red-700 text-white border border-red-500/50'
-                    : 'bg-gray-900/80 text-gray-100 border border-gray-700/50'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-700 text-gray-100'
                 }`}>
                   {message.senderId !== socket?.id && (
-                    <div className="text-xs text-red-300 mb-2 font-semibold truncate">
+                    <div className="text-xs text-gray-400 mb-1 truncate">
                       {message.username}
                     </div>
                   )}
-                  <div className="break-words font-medium">{message.text}</div>
-                  <div className="text-xs opacity-75 mt-2 font-medium">
+                  <div className="break-words">{message.text}</div>
+                  <div className="text-xs opacity-70 mt-1">
                     {formatTime(message.timestamp)}
                   </div>
                 </div>
@@ -389,14 +341,14 @@ export default function ChatApp() {
           {/* Typing indicators */}
           {typingUsers.length > 0 && (
             <div className="flex justify-start">
-              <div className="bg-gray-900/80 text-gray-200 px-5 py-3 rounded-2xl flex-shrink-0 border border-gray-700/50 backdrop-blur-sm">
-                <div className="text-xs text-red-300 mb-2 font-semibold">
+              <div className="bg-gray-700 text-gray-300 px-4 py-2 rounded-lg flex-shrink-0">
+                <div className="text-xs text-gray-400 mb-1">
                   {typingUsers.join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing
                 </div>
                 <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                 </div>
               </div>
             </div>
@@ -405,23 +357,23 @@ export default function ChatApp() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Message Input */}
-        <div className="border-t border-red-900/30 p-6 bg-black/50 flex-shrink-0 backdrop-blur-sm">
-          <div className="flex space-x-4">
+        {/* Message Input - Fixed at bottom */}
+        <div className="border-t border-gray-700 p-4 bg-gray-800 flex-shrink-0">
+          <div className="flex space-x-2">
             <input
               ref={messageInputRef}
               type="text"
               value={newMessage}
               onChange={(e) => handleTyping(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message here..."
-              className="flex-1 px-5 py-3 bg-gray-900/50 border-2 border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-colors font-medium"
+              placeholder="Type a message..."
+              className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               maxLength={500}
             />
             <button
               onClick={sendMessage}
               disabled={!newMessage.trim()}
-              className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all duration-200 flex-shrink-0 transform hover:scale-105 disabled:scale-100 shadow-lg"
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors duration-200 flex-shrink-0"
             >
               <Send size={20} />
             </button>
