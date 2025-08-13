@@ -1,0 +1,13 @@
+{
+    "functions": {
+      "pages/api/socketio.js": {
+        "maxDuration": 30
+      }
+    },
+    "build": {
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+  
